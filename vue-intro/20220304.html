@@ -1,0 +1,81 @@
+<html>
+
+<head>
+    <title>VueJs 在线编辑器</title>
+    <script src="https://unpkg.com/vue@next"></script>
+    </script>
+</head>
+
+<body>
+    <div id="intro" style="text-align:center;">
+        <todo-list v-slot:default="slotProps">
+            <i class="fas fa-check"></i>
+            <span class="green" style="color:blue;">{{ slotProps.item }}</span>
+        </todo-list>
+        <group-component title="this is title">content {{ message }}</group-component>
+        <my-component v-model:title="message"></my-component>
+        <h1>{{ message }}</h1>
+        <input v-model="message" />
+        <hr>
+        <ul>
+            <li v-for="(item, index) in items">
+                {{ item }}
+            </li>
+        </ul>
+    </div>
+    <script type="text/javascript">
+        const app = Vue.createApp({
+            data() {
+                return { message: "hello world", items: ['cat', 'dog', 'pig', 'cow'] }
+            }
+        })
+
+        app.component("my-component", {
+            props: {
+                title: String
+            },
+            emits: ["update:title"],
+            template: `
+			<input
+			  type="text"
+			  :value="title"
+			  @input="$emit('update:title', $event.target.value)">
+		`
+        })
+
+        app.component("group-component", {
+            props: {
+                title: String
+            },
+            template: `
+                <div>
+                    <h4>{{ title }}</h4>
+                    <div>
+                        <slot></slot>    
+                    </div>
+                </div>
+            `
+        })
+
+        app.component("todo-list", {
+            data() {
+                return {
+                    items: ['cat', 'dog', 'pig', 'cow']
+                }
+            },
+            template: `
+                <ul>
+                    <li v-for="(item, index) in items">
+                        <slot :item="item">
+                            {{ index }} - {{ item }}
+                        </slot>
+                    </li>
+                </ul>
+            `
+        })
+
+        const vm = app.mount("#intro")
+    </script>
+</body>
+
+</html>
